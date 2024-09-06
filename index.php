@@ -35,8 +35,69 @@ function generateRandomString($length = 10) {
 
     <title>ぬん！</title>
 
+    <script type="text/javascript" src="/assets/js/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/lib/ion.sound.min.js"></script>
+
     <link rel="stylesheet" href="/assets/style/web-style.css?version=<?php echo generateRandomString(16) ?>">
 </head>
 
-ぬん？まだこのサイトは作り途中みたい... <br>
-しかせんべいでも食べてのんびり待ちましょう
+<div id="main-content">
+    
+    ぬん？まだこのサイトは作り途中みたい... <br>
+    しかせんべいでも食べてのんびり待ちましょう
+    <div id="image-container">
+        <img id="shika-image" src="https://shikanoko.net/assets/image/shika_face.png" alt="Shika Face">
+    </div>
+    <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
+</div>
+
+<style>
+body {
+    background-image: url("https://shikanoko.net/assets/image/shika_background.png");
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center center;
+}
+#image-container {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#shika-image {
+    width: 100%;
+    max-width: 300px; /* 最大サイズに設定 */
+    cursor: pointer;
+    position: relative; /* 追加 */
+}
+</style>
+
+<script>
+ion.sound({
+	sounds: [{name: "nunn_audio"}],
+	path: "/assets/",
+	preload: true,
+	multiplay: true
+});
+
+$(document).ready(function(){
+    // 画像を上から中央に移動
+    $('#image-container').animate({
+        top: '50%',
+        transform: 'translate(-50%, -50%)'
+    }, 1000, function() {
+        // 移動完了後、クリック可能にする
+        $('#shika-image').on('click', function() {
+            // yを-15pxし、戻す
+            $(this).animate({ top: '-=15px' }, 200)
+                   .animate({ top: '+=15px' }, 200);
+            
+            // オーディオを再生
+            //$('#nunn-audio')[0].play();
+            ion.sound.play("nunn_audio");
+        });
+    });
+});
+
+</script>
