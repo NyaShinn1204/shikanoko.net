@@ -1,0 +1,12 @@
+Options -MultiViews
+
+RewriteEngine On
+
+# URLに.phpが含まれていない場合、それを追加する
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.*)$ $1.php [L]
+
+# 404ページにダイレクト
+ErrorDocument 403 /assets/html/403.html
+ErrorDocument 404 /assets/html/404.html

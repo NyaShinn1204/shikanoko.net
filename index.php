@@ -38,6 +38,7 @@ function generateRandomString($length = 10)
 
     <script type="text/javascript" src="/assets/js/lib/jquery.min.js"></script>
     <script type="text/javascript" src="/assets/js/lib/ion.sound.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <link rel="stylesheet" href="/assets/style/web-style.css?version=<?php echo generateRandomString(16) ?>">
 </head>
@@ -144,8 +145,46 @@ function generateRandomString($length = 10)
     }
 </style>
 
+<?php
+
+
+// encrypte_lkey 処理
+function gen_key()
+{
+    $numbers = [];
+    for ($i = 0; $i < 4; $i++) {
+        $numbers[] = rand(2, 13);
+    }
+
+    $key = implode(' * ', $numbers);
+    return $key;
+}
+
+function gen_unix_enc()
+{
+    return gen_key();
+}
+
+
+// encrypte_nkey 処理
+function encrypte_nkey()
+{
+    $iv_b64_enc = "yGird5xcnxmAi9qVvg7rDA==";
+    $iv_token_b64_enc = "TyylczAOs9q4awHGrgQGKw==";
+    $key = "Yt1BFir5c73iqmwieMSIhQ==";
+    $key_token = "gC7u74wI2f6YBnycxjGzRQ==";
+
+    $unix_time = time();
+
+    $token_encrypt = base64_encode(openssl_encrypt(base64_encode($unix_time), 'aes-256-cbc', base64_decode($key_token), OPENSSL_RAW_DATA, base64_decode($iv_token_b64_enc)));
+
+    $enc_token = openssl_encrypt($token_encrypt, 'aes-256-cbc', base64_decode($key), OPENSSL_RAW_DATA, base64_decode($iv_b64_enc));
+    return base64_encode($enc_token);
+}
+?>
+
 <script>
-    var mode = 1;
+    var realtime_mode = 1;
     ion.sound({
         sounds: [{
             name: "nunn_audio"
@@ -154,6 +193,73 @@ function generateRandomString($length = 10)
         preload: true,
         multiplay: true
     });
+
+    function encrypte_lkey() {
+        Q = Math.round((new Date()).getTime() / 1000);
+        P = Q * <?php echo gen_unix_enc(); ?>;
+        B = btoa(P);
+        B = B.replace("==", "")
+        return B
+    }
+
+    function encrypte_nkey() {
+        // Base64エンコードされたキーとIVを生成
+        const iv = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(16)); ?>");
+        const key = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(32)); ?>");
+
+        const iv_token = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(16)); ?>");
+        const key_token = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(32)); ?>");
+
+        const private_key = iv + "|" + key + "|" + iv_token + "|" + key_token + "|"
+
+        const unix_time = Math.floor(Date.now() / 1000).toString();
+
+        // Encrypt UNIX time
+        const token_encrypt = CryptoJS.AES.encrypt(unix_time, key_token, {
+            iv: iv_token,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        }).toString();
+
+        // Encrypt the resulting token
+        const enc_token = CryptoJS.AES.encrypt(token_encrypt, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        }).toString();
+
+        return [btoa(enc_token), private_key];
+    }
+
+
+    setInterval(function() {
+        if (realtime_mode != 1) {
+            return
+        };
+        //console.log(random_string(16))
+        //console.log(Math.round((new Date()).getTime() / 1000))
+
+        encrypt = encrypte_nkey()
+
+        $.ajax({
+            //url: 'get?'+Math.random(),
+            url: 'get?' + encrypte_lkey(),
+            type: 'POST',
+            dataType: 'json',
+            cache: false,
+            data: {
+                nun: 'payload',
+                n_key: encrypt[0],
+                s_key: encrypt[1]
+            }
+        }).done(function(data) {
+            if (localNynpass() < data.cnt) {
+                after = data.cnt;
+                before = localNynpass();
+                renderNyanpass();
+            }
+        }).fail(function() {});
+    }, 3000);
 
     $(document).ready(function() {
         // 画像を上から中央に移動
@@ -178,8 +284,10 @@ function generateRandomString($length = 10)
     });
 
     $('#realtime-mode .button_mode').on('click', function() {
-        mode++;
-        if (mode > 2) mode = 1;
+        realtime_mode++;
+        if (realtime_mode > 2) {
+            realtime_mode = 1;
+        }
         $('#realtime-mode .button_mode,#realtime-mode .button_mode span').toggleClass('active');
     });
 </script>
