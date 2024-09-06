@@ -41,14 +41,16 @@ function generateRandomString($length = 10) {
     <link rel="stylesheet" href="/assets/style/web-style.css?version=<?php echo generateRandomString(16) ?>">
 </head>
 
-<div id="main-content">
+<div id="main-container">
     
     ぬん？まだこのサイトは作り途中みたい... <br>
     しかせんべいでも食べてのんびり待ちましょう
-    <div id="image-container">
-        <img id="shika-image" src="https://shikanoko.net/assets/image/shika_face.png" alt="Shika Face">
+    <div id="main-content">
+        <div id="image-container">
+            <img id="shika-image" src="https://shikanoko.net/assets/image/shika_face_nobg.png" alt="Shika Face">
+        </div>
+        <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
     </div>
-    <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
 </div>
 
 <style>
@@ -58,6 +60,21 @@ body {
     background-size: cover;
     background-position: center center;
 }
+/*
+#main-content {
+	width: 640px;
+	height: 460px;
+	background: rgba(0,0,0,0.3);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -320px;
+	margin-top: -230px;
+	border-radius: 10px;
+	text-align: center;
+}
+*/
+
 #image-container {
     position: absolute;
     top: -100%;
@@ -67,7 +84,7 @@ body {
 
 #shika-image {
     width: 100%;
-    max-width: 300px; /* 最大サイズに設定 */
+    /*max-width: 300px; /* 最大サイズに設定 */
     cursor: pointer;
     position: relative; /* 追加 */
 }
@@ -84,20 +101,20 @@ ion.sound({
 $(document).ready(function(){
     // 画像を上から中央に移動
     $('#image-container').animate({
-        top: '50%',
+        top: '25%',
         transform: 'translate(-50%, -50%)'
     }, 1000, function() {
         // 移動完了後、クリック可能にする
         $('#shika-image').on('click', function() {
-            // yを-15pxし、戻す
-            $(this).animate({ top: '-=15px' }, 200)
+            // アニメーションが遅れないように、現在のアニメーションを完了させる
+            $(this).finish().animate({ top: '-=15px' }, 200)
                    .animate({ top: '+=15px' }, 200);
             
             // オーディオを再生
-            //$('#nunn-audio')[0].play();
             ion.sound.play("nunn_audio");
         });
     });
 });
+
 
 </script>
