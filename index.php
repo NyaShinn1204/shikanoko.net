@@ -203,33 +203,39 @@ function encrypte_nkey()
     }
 
     function encrypte_nkey() {
+        function generateRandomBase64(size) {
+            const randomBytes = CryptoJS.lib.WordArray.random(size);
+            return CryptoJS.enc.Base64.stringify(randomBytes);
+        }
+
         // Base64エンコードされたキーとIVを生成
-        const iv = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(16)); ?>");
-        const key = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(32)); ?>");
+        const iv = generateRandomBase64(16); // 16 bytes for AES
+        const key = generateRandomBase64(32); // 32 bytes for AES-256
 
-        const iv_token = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(16)); ?>");
-        const key_token = CryptoJS.enc.Hex.parse("<?php echo bin2hex(openssl_random_pseudo_bytes(32)); ?>");
+        const iv_token = generateRandomBase64(16); // 16 bytes for AES
+        const key_token = generateRandomBase64(32); // 32 bytes for AES-256
 
-        const private_key = iv + "|" + key + "|" + iv_token + "|" + key_token + "|"
+        const private_key = iv + "|" + key + "|" + iv_token + "|" + key_token + "|";
 
         const unix_time = Math.floor(Date.now() / 1000).toString();
 
-        // Encrypt UNIX time
-        const token_encrypt = CryptoJS.AES.encrypt(unix_time, key_token, {
-            iv: iv_token,
+        // Encrypt UNIX time with the token key and IV
+        const token_encrypt = CryptoJS.AES.encrypt(unix_time, CryptoJS.enc.Base64.parse(key_token), {
+            iv: CryptoJS.enc.Base64.parse(iv_token),
             mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7
         }).toString();
 
-        // Encrypt the resulting token
-        const enc_token = CryptoJS.AES.encrypt(token_encrypt, key, {
-            iv: iv,
+        // Encrypt the resulting token with the main key and IV
+        const enc_token = CryptoJS.AES.encrypt(token_encrypt, CryptoJS.enc.Base64.parse(key), {
+            iv: CryptoJS.enc.Base64.parse(iv),
             mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7
         }).toString();
 
-        return [btoa(enc_token), private_key];
+        return [enc_token, private_key];
     }
+
 
 
     setInterval(function() {
