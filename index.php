@@ -1,5 +1,6 @@
 <?php
-function generateRandomString($length = 10) {
+function generateRandomString($length = 10)
+{
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';
@@ -42,7 +43,7 @@ function generateRandomString($length = 10) {
 </head>
 
 <div id="main-container">
-    
+
     ぬん？まだこのサイトは作り途中みたい... <br>
     しかせんべいでも食べてのんびり待ちましょう
     <div id="main-content">
@@ -51,16 +52,26 @@ function generateRandomString($length = 10) {
         </div>
         <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
     </div>
+    <div id="downside-content">
+        <div id="realtime-mode">
+            <div class="button_mode active">
+                りあるたいむ同期
+                <span class="active">ON</span>
+                <span class>OFF</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
-body {
-    background-image: url("https://shikanoko.net/assets/image/shika_background.png");
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center center;
-}
-/*
+    body {
+        background-image: url("https://shikanoko.net/assets/image/shika_background.png");
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center center;
+    }
+
+    /*
 #main-content {
 	width: 640px;
 	height: 460px;
@@ -74,47 +85,90 @@ body {
 	text-align: center;
 }
 */
+    #realtime-mode .button_mode {
+        text-align: center;
+        display: inline-block;
+        background: #dedede;
+        color: #999;
+        line-height: 1;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 11em;
+        font-size: 13px;
 
-#image-container {
-    position: absolute;
-    top: -100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
+        /* おんどりゃーここでテキストコピー無効 */
+        user-select: none; /* すべてのブラウザに対応するためのプレフィックスを含める */
+        -webkit-user-select: none; /* Chrome, Safari, Edge */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+    }
 
-#shika-image {
-    width: 100%;
-    /*max-width: 300px; /* 最大サイズに設定 */
-    cursor: pointer;
-    position: relative; /* 追加 */
-}
+    #realtime-mode .button_mode.active {
+        background: #99cc00;
+        color: #fff;
+    }
+
+    #realtime-mode .button_mode span.active {
+        display: inline;
+    }
+
+    #realtime-mode .button_mode span {
+        display: none;
+    }
+
+    #image-container {
+        position: absolute;
+        top: -100%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    #shika-image {
+        width: 100%;
+        /*max-width: 300px; /* 最大サイズに設定 */
+        cursor: pointer;
+        position: relative;
+        /* 追加 */
+    }
 </style>
 
 <script>
-ion.sound({
-	sounds: [{name: "nunn_audio"}],
-	path: "/assets/",
-	preload: true,
-	multiplay: true
-});
+    var mode = 1;
+    ion.sound({
+        sounds: [{
+            name: "nunn_audio"
+        }],
+        path: "/assets/",
+        preload: true,
+        multiplay: true
+    });
 
-$(document).ready(function(){
-    // 画像を上から中央に移動
-    $('#image-container').animate({
-        top: '25%',
-        transform: 'translate(-50%, -50%)'
-    }, 1000, function() {
-        // 移動完了後、クリック可能にする
-        $('#shika-image').on('click', function() {
-            // アニメーションが遅れないように、現在のアニメーションを完了させる
-            $(this).finish().animate({ top: '-=15px' }, 200)
-                   .animate({ top: '+=15px' }, 200);
-            
-            // オーディオを再生
-            ion.sound.play("nunn_audio");
+    $(document).ready(function() {
+        // 画像を上から中央に移動
+        $('#image-container').animate({
+            top: '25%',
+            transform: 'translate(-50%, -50%)'
+        }, 1000, function() {
+            // 移動完了後、クリック可能にする
+            $('#shika-image').on('click', function() {
+                // アニメーションが遅れないように、現在のアニメーションを完了させる
+                $(this).finish().animate({
+                        top: '-=15px'
+                    }, 200)
+                    .animate({
+                        top: '+=15px'
+                    }, 200);
+
+                // オーディオを再生
+                ion.sound.play("nunn_audio");
+            });
         });
     });
-});
 
-
+    $('#realtime-mode .button_mode').on('click', function() {
+        mode++;
+        if (mode > 2) mode = 1;
+        $('#realtime-mode .button_mode,#realtime-mode .button_mode span').toggleClass('active');
+    });
 </script>
