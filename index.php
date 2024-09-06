@@ -72,19 +72,26 @@ function generateRandomString($length = 10)
     }
 
     /*
-#main-content {
-	width: 640px;
-	height: 460px;
-	background: rgba(0,0,0,0.3);
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-left: -320px;
-	margin-top: -230px;
-	border-radius: 10px;
-	text-align: center;
-}
-*/
+    #main-content {
+    	width: 640px;
+    	height: 460px;
+    	background: rgba(0,0,0,0.3);
+    	position: absolute;
+    	top: 50%;
+    	left: 50%;
+    	margin-left: -320px;
+    	margin-top: -230px;
+    	border-radius: 10px;
+    	text-align: center;
+    }
+    */
+    #realtime-mode {
+        bottom: 0;
+        left: 50%;
+        position: fixed;
+        transform: translateX(-50%);
+    }
+
     #realtime-mode .button_mode {
         text-align: center;
         display: inline-block;
@@ -98,10 +105,14 @@ function generateRandomString($length = 10)
         font-size: 13px;
 
         /* おんどりゃーここでテキストコピー無効 */
-        user-select: none; /* すべてのブラウザに対応するためのプレフィックスを含める */
-        -webkit-user-select: none; /* Chrome, Safari, Edge */
-        -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        /* すべてのブラウザに対応するためのプレフィックスを含める */
+        -webkit-user-select: none;
+        /* Chrome, Safari, Edge */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
     }
 
     #realtime-mode .button_mode.active {
@@ -147,7 +158,7 @@ function generateRandomString($length = 10)
     $(document).ready(function() {
         // 画像を上から中央に移動
         $('#image-container').animate({
-            top: '25%',
+            top: '5%',
             transform: 'translate(-50%, -50%)'
         }, 1000, function() {
             // 移動完了後、クリック可能にする
