@@ -54,6 +54,8 @@ function generateRandomString($length = 10)
         <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
     </div>
     <div id="downside-content">
+        <span>とーたるぬん！</span>
+        <div id="total"></div>
         <div id="realtime-mode">
             <div class="button_mode active">
                 りあるたいむ同期
@@ -65,6 +67,11 @@ function generateRandomString($length = 10)
 </div>
 
 <style>
+    @font-face {
+        font-family: Bizin-Gothic;
+        src: url(/assets/fonts/BizinGothic-Bold.ttf);
+    }
+
     body {
         background-image: url("https://shikanoko.net/assets/image/shika_background.png");
         background-attachment: fixed;
@@ -86,11 +93,23 @@ function generateRandomString($length = 10)
     	text-align: center;
     }
     */
-    #realtime-mode {
+    #downside-content {
+        text-align: center;
         bottom: 0;
         left: 50%;
         position: fixed;
         transform: translateX(-50%);
+    }
+
+    #total {
+        font-size: 70px;
+        text-align: center;
+        line-height: 1;
+        color: #e75297;
+        margin-top: 10px;
+        font-family: Bizin-Gothic;
+        filter: dropshadow(color=#fff, offX=0, offY=-1) dropshadow(color=#fff, offX=1, offY=0) dropshadow(color=#fff, offX=0, offY=1) dropshadow(color=#fff, offX=-1, offY=0);
+        text-shadow: #fff 1px 1px 0px, #fff -1px 1px 0px, #fff 1px -1px 0px, #fff -1px -1px 0px;
     }
 
     #realtime-mode .button_mode {
@@ -149,7 +168,7 @@ function generateRandomString($length = 10)
 
 
 // encrypte_lkey 処理
-function gen_key()
+function gen_unix_enc()
 {
     $numbers = [];
     for ($i = 0; $i < 4; $i++) {
@@ -158,28 +177,6 @@ function gen_key()
 
     $key = implode(' * ', $numbers);
     return $key;
-}
-
-function gen_unix_enc()
-{
-    return gen_key();
-}
-
-
-// encrypte_nkey 処理
-function encrypte_nkey()
-{
-    $iv_b64_enc = "yGird5xcnxmAi9qVvg7rDA==";
-    $iv_token_b64_enc = "TyylczAOs9q4awHGrgQGKw==";
-    $key = "Yt1BFir5c73iqmwieMSIhQ==";
-    $key_token = "gC7u74wI2f6YBnycxjGzRQ==";
-
-    $unix_time = time();
-
-    $token_encrypt = base64_encode(openssl_encrypt(base64_encode($unix_time), 'aes-256-cbc', base64_decode($key_token), OPENSSL_RAW_DATA, base64_decode($iv_token_b64_enc)));
-
-    $enc_token = openssl_encrypt($token_encrypt, 'aes-256-cbc', base64_decode($key), OPENSSL_RAW_DATA, base64_decode($iv_b64_enc));
-    return base64_encode($enc_token);
 }
 ?>
 
@@ -193,6 +190,32 @@ function encrypte_nkey()
         preload: true,
         multiplay: true
     });
+
+    $("#total").html("作成中ぬん")
+
+    function get_local_nun() {
+        return parent($("#total").html());
+    }
+
+    function add_nunn() {
+        $.ajax({
+            url: 'add.php',
+            type: 'POST',
+            dataType: 'json',
+            cache: false,
+            data: {
+                nyan: 'pass'
+            }
+        }).done(function(data) {
+            if (mode == 2) {
+                reflectNyanpass(data.cnt);
+            }
+        }).fail(function() {});
+        if (mode == 1) {
+            var add = get_local_nun() + 1;
+            reflectNyanpass(add);
+        }
+    }
 
     function encrypte_lkey() {
         Q = Math.round((new Date()).getTime() / 1000);
@@ -285,6 +308,7 @@ function encrypte_nkey()
 
                 // オーディオを再生
                 ion.sound.play("nunn_audio");
+                add_nunn()
             });
         });
     });
