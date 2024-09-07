@@ -1,4 +1,11 @@
 <?php
+$connect = mysqli_connect("192.168.40.110", "update_only", "ujQZG)GUeTu4Dyz8", "shikanoko");
+mysqli_set_charset($connect, 'utf8');
+
+if ($connect === false) {
+    die("Opps Unable to connect " . mysqli_connect_error());
+}
+
 $n_key = isset($_POST['n_key']) ? $_POST['n_key'] : null;
 $s_key = isset($_POST['s_key']) ? $_POST['s_key'] : null;
 
@@ -12,7 +19,6 @@ function check_nowunixtime($unixtime) {
 }
 
 // 要素数を確認
-//echo count($parts);
 if (count($parts) === 5) {
     // 4つの変数にそれぞれの値を割り当てる
     $iv_b64_enc = $parts[0];
@@ -20,50 +26,50 @@ if (count($parts) === 5) {
     $iv_token_b64_enc = $parts[2];
     $key_token_b64_enc = $parts[3];
 
-    // 変数の内容を表示（必要に応じて削除または変更）
-    //echo "iv_b64_enc: " . $iv_b64_enc . "<br>";
-    //echo "key_b64_enc: " . $key_b64_enc . "<br>";
-    //echo "iv_token_b64_enc: " . $iv_token_b64_enc . "<br>";
-    //echo "key_token_b64_enc: " . $key_token_b64_enc . "<br>";
-
     $decrypt_nkey = decrypte_nkey($n_key, $iv_b64_enc, $key_b64_enc, $iv_token_b64_enc, $key_token_b64_enc);
+    
     if (check_nowunixtime($decrypt_nkey)) {
-        $data = array(
-            'result' => 'success',
-            'message' => array('jp_msg' => '正しいnkeyです', 'en_msg' => 'Correct nkey'),
-            //'data' => array('key1' => 'value1', 'key2' => 'value2')
-        );
+        // view_countを取得するためのSQLクエリ
+        $sql_view_count = "SELECT view_count FROM view WHERE id = 1";
+        $result = mysqli_query($connect, $sql_view_count);
         
-        // Step 2: Convert data to JSON
-        $jsonData = json_encode($data);
-        
-        // Step 3: Set the Content-Type header
-        header('Content-Type: application/json');
-        
-        // Step 4: Output the JSON string
-        echo $jsonData;
+        if ($result && mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_array($result);
+            $view_count = $row['view_count'];
+
+            $data = array(
+                'result' => 'success',
+                'message' => array('jp_msg' => '正しいnkeyです', 'en_msg' => 'Correct nkey'),
+                'data' => array('view_count' => $view_count)
+            );
+        } else {
+            $data = array(
+                'result' => 'failed',
+                'message' => array('jp_msg' => 'view_countの取得に失敗しました', 'en_msg' => 'Failed to retrieve view_count')
+            );
+        }
+
+        mysqli_free_result($result);
+
     } else {
         $data = array(
             'result' => 'failed',
-            'message' => array('jp_msg' => '不正なnkeyです', 'en_msg' => 'Incorrect nkey'),
-            //'data' => array('key1' => 'value1', 'key2' => 'value2')
+            'message' => array('jp_msg' => '不正なnkeyです', 'en_msg' => 'Incorrect nkey')
         );
-        
-        // Step 2: Convert data to JSON
-        $jsonData = json_encode($data);
-        
-        // Step 3: Set the Content-Type header
-        header('Content-Type: application/json');
-        
-        // Step 4: Output the JSON string
-        echo $jsonData;
     }
 } else {
-    // エラーメッセージを表示して処理を中断
-    echo "エラー: 4つの要素が与えられていません。";
-    exit;
+    $data = array(
+        'result' => 'failed',
+        'message' => array('jp_msg' => '4つの要素が与えられていません', 'en_msg' => 'Not all 4 elements are provided')
+    );
 }
-//echo $n_key;
+
+// JSONに変換して返す
+$jsonData = json_encode($data);
+header('Content-Type: application/json');
+echo $jsonData;
+
+mysqli_close($connect);
 
 function decrypte_nkey($enc_token, $iv_b64_enc, $key_b64_enc, $iv_token_b64_enc, $key_token_b64_enc) {
     // Decode the incoming base64-encoded token first
@@ -88,8 +94,4 @@ function decrypte_nkey($enc_token, $iv_b64_enc, $key_b64_enc, $iv_token_b64_enc,
 
     return $token_decrypt;
 }
-
-
-
-//
 ?>

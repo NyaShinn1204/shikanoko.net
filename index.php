@@ -21,8 +21,7 @@ function generateRandomString($length = 10)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="msapplication-TitleColor" content="#E4E9F7">
-    <meta name="title" content="しかのこのこのここしたんたん">
-    <meta name="description" content="ぬん！">
+    <meta name="description" content="ぬん！をの気持ちを全世界にシェアできるサービス">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://shikanoko.net">
     <meta property="og:title" content="しかのこ - ぬん！">
@@ -34,7 +33,7 @@ function generateRandomString($length = 10)
     <!-- スマホ用アイコン -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.jpg">
 
-    <title>ぬん！</title>
+    <title>ぬん！ボタン</title>
 
     <script type="text/javascript" src="/assets/js/lib/jquery.min.js"></script>
     <script type="text/javascript" src="/assets/js/lib/ion.sound.min.js"></script>
@@ -49,7 +48,7 @@ function generateRandomString($length = 10)
     しかせんべいでも食べてのんびり待ちましょう
     <div id="main-content">
         <div id="image-container">
-            <img id="shika-image" src="https://shikanoko.net/assets/image/shika_face_nobg.png" alt="Shika Face">
+            <img oncontextmenu='return false;' oncopy='return false;' id="shika-image" src="https://shikanoko.net/assets/image/shika_face_nobg.png" alt="Shika Face">
         </div>
         <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
     </div>
@@ -105,7 +104,7 @@ function generateRandomString($length = 10)
         font-size: 70px;
         text-align: center;
         line-height: 1;
-        color: #e75297;
+        color: #e6bc99;
         margin-top: 10px;
         font-family: Bizin-Gothic;
         filter: dropshadow(color=#fff, offX=0, offY=-1) dropshadow(color=#fff, offX=1, offY=0) dropshadow(color=#fff, offX=0, offY=1) dropshadow(color=#fff, offX=-1, offY=0);
@@ -182,6 +181,10 @@ function gen_unix_enc()
 
 <script>
     var realtime_mode = 1;
+    var time_cnt = 0;
+    var max_time_cnt = 200;
+    var deley = 10;
+
     ion.sound({
         sounds: [{
             name: "nunn_audio"
@@ -191,29 +194,68 @@ function gen_unix_enc()
         multiplay: true
     });
 
-    $("#total").html("作成中ぬん")
+    //$("#total").html("作成中ぬん")
 
-    function get_local_nun() {
-        return parent($("#total").html());
-    }
-
-    function add_nunn() {
+    function init_nunn() {
+        encrypt = encrypte_nkey()
         $.ajax({
-            url: 'add.php',
+            url: 'get?' + encrypte_lkey(),
             type: 'POST',
             dataType: 'json',
             cache: false,
             data: {
-                nyan: 'pass'
+                nun: 'payload',
+                n_key: encrypt[0],
+                s_key: encrypt[1]
+            }
+        }).done(function(response) {
+            update_total(response.data.view_count);
+        }).fail(function() {});
+    }
+
+    function get_local_nun() {
+        return parseInt($("#total").html(), 10) || 0;
+    }
+
+    function render_nunn() {
+        time_cnt++;
+        if (time_cnt <= max_time_cnt) {
+            var cnt = Math.floor((after - before) * time_cnt / max_time_cnt) + before;
+            update_total(cnt);
+            timer = setTimeout(function() {
+                render_nunn()
+            }, deley);
+        } else {
+            clearTimeout(timer);
+            timer = null;
+            time_cnt = 0;
+        }
+    }
+
+    function update_total(cnt) {
+        if (get_local_nun() > cnt) {
+            cnt = get_local_nun();
+        }
+        $('#total').html(cnt);
+    }
+
+    function add_nunn() {
+        $.ajax({
+            url: 'add',
+            type: 'POST',
+            dataType: 'json',
+            cache: false,
+            data: {
+                shika: 'noko'
             }
         }).done(function(data) {
-            if (mode == 2) {
-                reflectNyanpass(data.cnt);
+            if (realtime_mode == 2) {
+                update_total(data.view_count);
             }
         }).fail(function() {});
-        if (mode == 1) {
+        if (realtime_mode == 1) {
             var add = get_local_nun() + 1;
-            reflectNyanpass(add);
+            update_total(add);
         }
     }
 
@@ -259,38 +301,39 @@ function gen_unix_enc()
         return [enc_token, private_key];
     }
 
-
-
-    setInterval(function() {
-        if (realtime_mode != 1) {
-            return
-        };
-        //console.log(random_string(16))
-        //console.log(Math.round((new Date()).getTime() / 1000))
-
-        encrypt = encrypte_nkey()
-
-        $.ajax({
-            //url: 'get?'+Math.random(),
-            url: 'get?' + encrypte_lkey(),
-            type: 'POST',
-            dataType: 'json',
-            cache: false,
-            data: {
-                nun: 'payload',
-                n_key: encrypt[0],
-                s_key: encrypt[1]
-            }
-        }).done(function(data) {
-            if (localNynpass() < data.cnt) {
-                after = data.cnt;
-                before = localNynpass();
-                renderNyanpass();
-            }
-        }).fail(function() {});
-    }, 3000);
-
     $(document).ready(function() {
+        // 初期化処理
+        init_nunn();
+
+        // 定期的にデータを取得
+        setInterval(function() {
+            if (realtime_mode != 1) {
+                return;
+            }
+
+            let encrypt = encrypte_nkey();
+
+            $.ajax({
+                url: 'get?' + encrypte_lkey(),
+                type: 'POST',
+                dataType: 'json',
+                cache: false,
+                data: {
+                    nun: 'payload',
+                    n_key: encrypt[0],
+                    s_key: encrypt[1]
+                }
+            }).done(function(response) {
+                if (get_local_nun() < response.data.view_count) {
+                    after = response.data.view_count;
+                    before = get_local_nun();
+                    render_nunn();
+                }
+            }).fail(function() {
+                console.error('Failed to retrieve data.');
+            });
+        }, 3000);
+
         // 画像を上から中央に移動
         $('#image-container').animate({
             top: '5%',
@@ -300,15 +343,14 @@ function gen_unix_enc()
             $('#shika-image').on('click', function() {
                 // アニメーションが遅れないように、現在のアニメーションを完了させる
                 $(this).finish().animate({
-                        top: '-=15px'
-                    }, 200)
-                    .animate({
-                        top: '+=15px'
-                    }, 200);
+                    top: '-=15px'
+                }, 200).animate({
+                    top: '+=15px'
+                }, 200);
 
                 // オーディオを再生
                 ion.sound.play("nunn_audio");
-                add_nunn()
+                add_nunn();
             });
         });
     });
