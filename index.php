@@ -78,20 +78,6 @@ function generateRandomString($length = 10)
         background-position: center center;
     }
 
-    /*
-    #main-content {
-    	width: 640px;
-    	height: 460px;
-    	background: rgba(0,0,0,0.3);
-    	position: absolute;
-    	top: 50%;
-    	left: 50%;
-    	margin-left: -320px;
-    	margin-top: -230px;
-    	border-radius: 10px;
-    	text-align: center;
-    }
-    */
     #downside-content {
         text-align: center;
         bottom: 0;
@@ -125,13 +111,9 @@ function generateRandomString($length = 10)
 
         /* おんどりゃーここでテキストコピー無効 */
         user-select: none;
-        /* すべてのブラウザに対応するためのプレフィックスを含める */
         -webkit-user-select: none;
-        /* Chrome, Safari, Edge */
         -moz-user-select: none;
-        /* Firefox */
         -ms-user-select: none;
-        /* Internet Explorer/Edge */
     }
 
     #realtime-mode .button_mode.active {
@@ -156,10 +138,8 @@ function generateRandomString($length = 10)
 
     #shika-image {
         width: 100%;
-        /*max-width: 300px; /* 最大サイズに設定 */
         cursor: pointer;
         position: relative;
-        /* 追加 */
     }
 </style>
 
@@ -180,6 +160,14 @@ function gen_unix_enc()
 ?>
 
 <script>
+    /*
+    ぬん！ここには処理を書いてるよ～
+    n_keyはunixtimeが+-3いないじゃないとはじかれるよ～
+    だからカウントを取得したいなら
+    /addから-1したほうがいいよ～
+    */
+    
+
     var realtime_mode = 1;
     var time_cnt = 0;
     var max_time_cnt = 200;
@@ -193,8 +181,6 @@ function gen_unix_enc()
         preload: true,
         multiplay: true
     });
-
-    //$("#total").html("作成中ぬん")
 
     function init_nunn() {
         encrypt = encrypte_nkey()
@@ -274,24 +260,24 @@ function gen_unix_enc()
         }
 
         // Base64エンコードされたキーとIVを生成
-        const iv = generateRandomBase64(16); // 16 bytes for AES
-        const key = generateRandomBase64(32); // 32 bytes for AES-256
+        const iv = generateRandomBase64(16); 
+        const key = generateRandomBase64(32); 
 
-        const iv_token = generateRandomBase64(16); // 16 bytes for AES
-        const key_token = generateRandomBase64(32); // 32 bytes for AES-256
+        const iv_token = generateRandomBase64(16); 
+        const key_token = generateRandomBase64(32);
 
         const private_key = iv + "|" + key + "|" + iv_token + "|" + key_token + "|";
 
         const unix_time = Math.floor(Date.now() / 1000).toString();
 
-        // Encrypt UNIX time with the token key and IV
+        // 第一段階暗号化
         const token_encrypt = CryptoJS.AES.encrypt(unix_time, CryptoJS.enc.Base64.parse(key_token), {
             iv: CryptoJS.enc.Base64.parse(iv_token),
             mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7
         }).toString();
 
-        // Encrypt the resulting token with the main key and IV
+        // 第二段階暗号化
         const enc_token = CryptoJS.AES.encrypt(token_encrypt, CryptoJS.enc.Base64.parse(key), {
             iv: CryptoJS.enc.Base64.parse(iv),
             mode: CryptoJS.mode.CBC,
@@ -302,10 +288,10 @@ function gen_unix_enc()
     }
 
     $(document).ready(function() {
-        // 初期化処理
+        // ふぁーすとろーど
         init_nunn();
 
-        // 定期的にデータを取得
+        // りあるたいむ 機能
         setInterval(function() {
             if (realtime_mode != 1) {
                 return;
@@ -334,21 +320,18 @@ function gen_unix_enc()
             });
         }, 3000);
 
-        // 画像を上から中央に移動
+        // 画像を上からこんにちは！
         $('#image-container').animate({
             top: '5%',
             transform: 'translate(-50%, -50%)'
         }, 1000, function() {
-            // 移動完了後、クリック可能にする
             $('#shika-image').on('click', function() {
-                // アニメーションが遅れないように、現在のアニメーションを完了させる
                 $(this).finish().animate({
                     top: '-=15px'
                 }, 200).animate({
                     top: '+=15px'
                 }, 200);
 
-                // オーディオを再生
                 ion.sound.play("nunn_audio");
                 add_nunn();
             });
