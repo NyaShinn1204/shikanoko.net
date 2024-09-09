@@ -43,9 +43,6 @@ function generateRandomString($length = 10)
 </head>
 
 <div id="main-container">
-
-    ぬん？まだこのサイトは作り途中みたい... <br>
-    しかせんべいでも食べてのんびり待ちましょう
     <div id="main-content">
         <div id="image-container">
             <img oncontextmenu='return false;' oncopy='return false;' id="shika-image" src="https://shikanoko.net/assets/image/shika_face_nobg.png" alt="Shika Face">
@@ -134,7 +131,6 @@ function generateRandomString($length = 10)
         left: 50%;
         transform: translate(-50%, -50%);
         width: 80%;
-        /* Adjust width as necessary */
     }
 
     #shika-image {
@@ -143,20 +139,16 @@ function generateRandomString($length = 10)
     }
 
     @media (min-width: 769px) {
-
-        /* Desktop */
+        /* ぱそこんばん */
         #image-container {
             top: 30%;
-            /* Higher position for desktop */
         }
     }
 
     @media (max-width: 768px) {
-
-        /* Mobile */
+        /* すまほばん */
         #image-container {
             top: 50%;
-            /* Centered on mobile */
         }
     }
 
@@ -189,10 +181,10 @@ function gen_unix_enc()
     /*
     ぬん！ここには処理を書いてるよ～
     n_keyはunixtimeが+-3いないじゃないとはじかれるよ～
-    だからカウントを取得したいなら
-    /addから-1したほうがいいよ～
+    
+    もしカウントを取得したいなら
+    addのapiで帰ってくる値から-1したほうがいいよ～
     */
-
 
     var realtime_mode = 1;
     var time_cnt = 0;
@@ -285,7 +277,7 @@ function gen_unix_enc()
             return CryptoJS.enc.Base64.stringify(randomBytes);
         }
 
-        // Base64エンコードされたキーとIVを生成
+        // いろいろ生成
         const iv = generateRandomBase64(16);
         const key = generateRandomBase64(32);
 
