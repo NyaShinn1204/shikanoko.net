@@ -69,7 +69,7 @@ function generateRandomString($length = 10)
     }
 
     body {
-        background-image: url("https://shikanoko.net/assets/image/shika_background-zipped.jpg");
+        background-image: url("https://shikanoko.net/assets/image/shika_background_zipped.jpg");
         background-attachment: fixed;
         background-size: cover;
         background-position: center center;
