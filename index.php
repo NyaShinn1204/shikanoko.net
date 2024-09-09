@@ -131,10 +131,36 @@ function generateRandomString($length = 10)
 
     #image-container {
         position: absolute;
-        top: -100%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%);
+        width: 80%;
+        /* Adjust width as necessary */
     }
+
+    #shika-image {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    @media (min-width: 769px) {
+
+        /* Desktop */
+        #image-container {
+            top: 30%;
+            /* Higher position for desktop */
+        }
+    }
+
+    @media (max-width: 768px) {
+
+        /* Mobile */
+        #image-container {
+            top: 50%;
+            /* Centered on mobile */
+        }
+    }
+
+
 
     #shika-image {
         width: 100%;
@@ -166,7 +192,7 @@ function gen_unix_enc()
     だからカウントを取得したいなら
     /addから-1したほうがいいよ～
     */
-    
+
 
     var realtime_mode = 1;
     var time_cnt = 0;
@@ -260,10 +286,10 @@ function gen_unix_enc()
         }
 
         // Base64エンコードされたキーとIVを生成
-        const iv = generateRandomBase64(16); 
-        const key = generateRandomBase64(32); 
+        const iv = generateRandomBase64(16);
+        const key = generateRandomBase64(32);
 
-        const iv_token = generateRandomBase64(16); 
+        const iv_token = generateRandomBase64(16);
         const key_token = generateRandomBase64(32);
 
         const private_key = iv + "|" + key + "|" + iv_token + "|" + key_token + "|";
@@ -322,7 +348,7 @@ function gen_unix_enc()
 
         // 画像を上からこんにちは！
         $('#image-container').animate({
-            top: '5%',
+            top: $(window).width() > 768 ? '30%' : '50%',
             transform: 'translate(-50%, -50%)'
         }, 1000, function() {
             $('#shika-image').on('click', function() {
