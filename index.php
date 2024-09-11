@@ -33,7 +33,7 @@ function generateRandomString($length = 10)
     <!-- スマホ用アイコン -->
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.jpg">
 
-    <title>ぬん！ボタン</title>
+    <title>ぬんぬんボタン</title>
 
     <script type="text/javascript" src="/assets/js/lib/jquery.min.js"></script>
     <script type="text/javascript" src="/assets/js/lib/ion.sound.min.js"></script>
