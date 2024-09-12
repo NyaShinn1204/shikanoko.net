@@ -50,7 +50,7 @@ function generateRandomString($length = 10)
         <audio id="nunn-audio" src="https://shikanoko.net/assets/nunn_audio.mp3"></audio>
     </div>
     <div id="downside-content">
-        <span>とーたるぬん！</span>
+        <span>とーたるしかせんべい</span>
         <div id="total"></div>
         <div id="realtime-mode">
             <div class="button_mode active">
