@@ -260,6 +260,9 @@ function gen_unix_enc()
         if (realtime_mode == 1) {
             var add = get_local_nun() + 1;
             update_total(add);
+        } else {
+            var add = get_local_nun() + 1;
+            update_total(add);
         }
     }
 
