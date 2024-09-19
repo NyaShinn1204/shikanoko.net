@@ -1,3 +1,15 @@
 /*
 作成途中
 */
+@font-face {
+    font-family: Bizin-Gothic;
+    src: url(/assets/fonts/BizinGothic-Bold.ttf);
+}
+
+span {
+    font-family: Bizin-Gothic;
+}
+
+div {
+    font-family: Bizin-Gothic;
+}
