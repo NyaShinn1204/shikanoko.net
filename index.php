@@ -21,7 +21,7 @@ function generateRandomString($length = 10)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="msapplication-TitleColor" content="#E4E9F7">
-    <meta name="description" content="ぬん！をの気持ちを全世界にシェアできるサービス">
+    <meta name="description" content="ぬん！の気持ちを全世界にシェアできるサービス">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://shikanoko.net">
     <meta property="og:title" content="しかのこ - ぬん！">
