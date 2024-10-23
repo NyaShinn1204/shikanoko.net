@@ -24,7 +24,8 @@ function generateRandomString($length = 10)
     <meta name="description" content="ぬん！の気持ちを気軽にシェアできるサービス">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://shikanoko.net">
-    <meta property="og:image" content="http://shikanoko.net/assets/apple-touch-icon.jpg"/>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:src" content="https://shikanoko.net/assets/image/shika_face_bg.png">
     <meta property="og:title" content="ぬんぬんボタン">
     <meta property="og:description" content="しかせんべいをたべよう！">
     <meta name="keywords" content="しかのこ,しかのこのこのここしたんたん,のこたん,ぬん,しかせんべい,鹿せんべい">
